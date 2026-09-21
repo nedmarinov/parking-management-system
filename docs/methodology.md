@@ -8,7 +8,7 @@ This is a lightweight workflow for a working prototype. Its priorities are corre
 
 The original brief has been analyzed and expanded into an implementation plan, shared technical contracts, and six feature specifications. The documentation is stored in a local Git repository with an initial commit.
 
-Application implementation has not started. The documents describe the intended system; their existence does not prove that the behavior works. The workflow below defines how we will move from those specifications to verified software.
+The [Phase 1 bootstrap](checkpoints/001-bootstrap.md) is implemented and awaiting review. Business features remain specified but unimplemented. Checkpoint records distinguish observed build/runtime results from planned behavior. The workflow below defines how we move from specifications to verified software.
 
 ## How work progresses
 

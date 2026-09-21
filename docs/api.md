@@ -1,6 +1,12 @@
 # REST API Contract
 
-Status: Ready — endpoints are specified but not implemented.
+Status: Only the bootstrap health endpoint below is implemented. All user, catalog, parking, and payment endpoints remain specified but unimplemented.
+
+## Bootstrap health endpoint
+
+`GET /api/health` returns `200` with `{"status":"UP"}`. It verifies that the HTTP application is responding and lets the frontend check its API connection. It does not verify PostgreSQL readiness or any parking feature. Compose uses it during bootstrap; the planned database-backed `/api/cities` check will replace it for container readiness once the catalog is implemented.
+
+The business API conventions and contracts below are implementation targets. Their global error handler is not present in the bootstrap.
 
 ## Conventions
 

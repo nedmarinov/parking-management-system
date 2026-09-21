@@ -1,6 +1,6 @@
 # Architecture
 
-Status: Ready — target design, not an implemented system.
+Status: Bootstrap implemented; the domain, persistence, and business-service design below remains the implementation target. See the [current checkpoint](checkpoints/001-bootstrap.md).
 
 ## System boundaries
 

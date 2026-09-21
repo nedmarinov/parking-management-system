@@ -1,6 +1,6 @@
 # Frontend Behavior
 
-Status: Ready — target React application behavior.
+Status: The React/Vite/shadcn foundation and a coming-soon page are implemented. The user flows below remain planned. See the [bootstrap checkpoint](checkpoints/001-bootstrap.md).
 
 ## Structure
 

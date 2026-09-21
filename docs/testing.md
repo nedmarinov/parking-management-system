@@ -1,6 +1,6 @@
 # Testing and Acceptance
 
-Status: Ready — this document specifies required verification. No application tests have been implemented or executed yet.
+Status: Bootstrap build and runtime checks are recorded in [checkpoint 001](checkpoints/001-bootstrap.md). No automated application test cases exist yet. The business test suites below remain planned.
 
 ## Approach
 

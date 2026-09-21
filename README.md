@@ -2,7 +2,7 @@
 
 A full-stack prototype for managing paid parking across multiple cities. Demo users select a vehicle and parking zone, start and stop parking, and pay using a fictional account balance.
 
-**Project status:** specification complete; application implementation has not started. The commands and application behavior below describe the implementation target. Backend, frontend, migrations, and Docker configuration do not exist yet.
+**Project status:** Phase 1 bootstrap is implemented and ready for review. The backend, frontend shell, Maven wrapper, pinned dependencies, and Docker Compose files are present. Parking features, database integration, and migrations are still pending. See the [bootstrap checkpoint](docs/checkpoints/001-bootstrap.md) for verification and review instructions.
 
 ## Intended user flow
 
@@ -20,13 +20,13 @@ Each vehicle can have one active session. A user can park multiple vehicles at o
 
 | Area | Planned technology |
 | --- | --- |
-| Backend | Java 21, Spring Boot, Spring Web, Spring Data JPA, Jakarta Bean Validation, Maven |
+| Backend | Java 21, Spring Boot 3.5.16, Spring Web, Jakarta Bean Validation, Maven 3.9.16; Spring Data JPA planned |
 | Database | PostgreSQL, Flyway |
-| Frontend | React, Vite, JavaScript/JSX, native `fetch`, shadcn/ui |
+| Frontend | React 19.3.0, Vite 8.3.0, JavaScript/JSX, native `fetch`, shadcn/ui, Tailwind CSS |
 | Tests | JUnit 5, Mockito, targeted PostgreSQL integration tests |
 | Runtime | Docker Compose, Nginx |
 
-Dependency and image versions will be pinned during bootstrap after Java 21 compatibility is verified.
+Direct frontend dependencies and container image versions are pinned. The Maven wrapper pins Maven; the Spring Boot parent manages backend dependency versions. The frontend's `.nvmrc` selects Node 24.21.0; Node 22.12+ and 24+ are supported by the project configuration.
 
 ## Repository layout
 
@@ -43,35 +43,53 @@ parking-management-system/
 │   ├── frontend.md
 │   ├── development.md
 │   ├── testing.md
+│   ├── checkpoints/
 │   ├── specs/
 │   └── reference/original-plan.md
-├── backend/                     # Planned Spring Boot application
-├── frontend/                    # Planned React application and Nginx
-└── docker-compose.yml           # Planned application stack
+├── backend/                     # Spring Boot application and Maven wrapper
+├── frontend/                    # React application and Nginx configuration
+└── docker-compose.yml           # Bootstrap application stack
 ```
 
 ## Running the application
 
-After implementation, an installed and running Docker engine with Docker Compose will be sufficient:
+The current checkpoint can run locally in two terminals. From `backend/`:
+
+```bash
+./mvnw spring-boot:run
+```
+
+From `frontend/`:
+
+```bash
+npm ci
+npm run dev
+```
+
+Open [http://127.0.0.1:5173](http://127.0.0.1:5173). The page should show **Parking service connected**. PostgreSQL is not needed by this bootstrap backend.
+
+The Compose files also provide the intended packaged startup:
 
 ```bash
 docker compose up --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Nginx will serve React and forward `/api` to the backend. PostgreSQL data will live in a named volume. Demo data will be installed by Flyway on first startup.
+Once Docker starts the stack, open [http://localhost:3000](http://localhost:3000). Nginx serves React and forwards `/api` to the backend. Compose configuration validation passed; container builds and startup remain unverified because the local Docker engine returned an API error. PostgreSQL has a named volume but is not yet connected to the application. Flyway and demo data belong to Phase 2.
 
 Startup, local development, configuration, shutdown, and database reset instructions are defined in the [development guide](docs/development.md).
 
 ## Testing
 
-The planned backend commands, run from `backend/`, are:
+Backend commands, run from `backend/`:
 
 ```bash
 ./mvnw test
 ./mvnw verify
 ```
 
-`test` will run unit and validation tests. `verify` will also run integration tests against a dedicated PostgreSQL database. The wrapper and build configuration will be added during implementation. See the [testing strategy](docs/testing.md) for required cases and the final smoke test.
+The bootstrap has been packaged successfully with `verify`. No application test cases exist yet; this establishes a successful build, not verified parking behavior. The planned unit, validation, and PostgreSQL integration suites will be added with their features. See the [testing strategy](docs/testing.md) for required cases and the final smoke test.
+
+From `frontend/`, `npm ci` installs locked dependencies and `npm run build` produces the application assets.
 
 ## Scope and assumptions
 

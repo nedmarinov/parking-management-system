@@ -1,6 +1,10 @@
 # Implementation Plan
 
-Status: Ready — implementation has not started.
+Status: In progress — Phase 1 bootstrap is implemented and awaiting review. Business features and database integration have not started.
+
+## Current checkpoint
+
+Review [001 — Bootstrap](checkpoints/001-bootstrap.md). Both applications build, the backend health endpoint responds, and Compose configuration validates. Container execution remains unverified because the local Docker engine is unavailable. The generated lockfile and implementation files await the review/commit checkpoint. Phase 2 is next after validation of this increment.
 
 ## Objective
 
@@ -33,8 +37,8 @@ Tests should accompany business implementation. The final verification phase con
 ## Delivery checklist
 
 - [ ] Source code is stored in a Git repository.
-- [ ] Java 21 / Spring Boot backend builds.
-- [ ] React frontend builds.
+- [x] Java 21 / Spring Boot backend builds.
+- [x] React frontend builds.
 - [ ] PostgreSQL schema and demo data are managed by Flyway.
 - [ ] At least two demo users and three vehicles are available.
 - [ ] User ownership is enforced on applicable operations.

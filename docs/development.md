@@ -1,12 +1,18 @@
 # Development and Operations Guide
 
-Status: Ready — this is the setup contract for the future implementation. The repository currently contains documentation only; the commands that depend on application files cannot run yet.
+Status: Bootstrap setup is present. Local backend/frontend builds and API connectivity have been verified. Compose configuration validates, but container builds/startup remain unverified because the Docker engine returned an API error. Business endpoints, migrations, and database integration remain pending. See [checkpoint 001](checkpoints/001-bootstrap.md) for the exact current scope.
 
 ## Prerequisites
 
 For the packaged application, install Docker with Docker Compose and start the Docker engine. The application must build and run without host Java, Maven, or Node installations.
 
-For local application development, use Java 21, the committed Maven wrapper, and a Node.js version supported by the pinned Vite version. Select and document the exact Node version during bootstrap. Commit `package-lock.json` and use `npm ci` once that lockfile exists.
+For local application development, use Java 21 and the included Maven wrapper, which selects Maven 3.9.16. The frontend `.nvmrc` selects Node 24.21.0; the project also supports Node 22.12+ and 24+. Use `npm ci` with the included `package-lock.json`.
+
+## Current bootstrap
+
+The backend currently runs without PostgreSQL. From `backend/`, run `./mvnw spring-boot:run`. From `frontend/`, run `npm ci` and `npm run dev` in another terminal. Open `http://127.0.0.1:5173` and confirm **Parking service connected**. `GET /api/health` returns `{"status":"UP"}` through the Vite proxy or directly on backend port 8080.
+
+The Dockerfiles, Nginx configuration, database container, and volume are present. The application does not yet read database settings or apply migrations. The database-backed behavior and integration-test commands below describe later phases.
 
 ## Target Compose services
 
@@ -16,13 +22,13 @@ For local application development, use Java 21, the committed Maven wrapper, and
 | `backend` | Spring Boot listening on container port 8080 | Reached through frontend in the full stack |
 | `postgres` | PostgreSQL with a named data volume | Publish `127.0.0.1:5432:5432` for local development and integration tests |
 
-Give PostgreSQL a `pg_isready` health check. Backend depends on a healthy database and applies Flyway migrations at startup. Give backend an HTTP health check against `/api/cities` and make frontend depend on backend health; this exercises an available application and database without introducing a separate observability subsystem. Ensure the chosen backend image contains the utility used by its health check.
+PostgreSQL has a `pg_isready` health check. Backend depends on a healthy database, and frontend depends on backend health. The current backend check uses `/api/health`; switch to database-backed `/api/cities` when that endpoint exists. Flyway startup migrations will be added in Phase 2. The backend runtime image installs curl for its health check.
 
 The frontend image builds with Node and serves only generated assets through Nginx at runtime. The backend image builds with Maven/Java 21 and runs the packaged application on Java 21. Configure Nginx so `/api/...` reaches `http://backend:8080/api/...` unchanged, while ordinary frontend paths serve the application.
 
 ## Planned configuration contract
 
-Create a root `.env.example` during bootstrap and ignore local `.env` files in Git. Compose should supply these defaults so a fresh clone starts without manual configuration:
+The root `.env.example` documents defaults, and local `.env` files are ignored by Git. Compose supplies these defaults without manual configuration:
 
 | Variable | Demo default | Used by |
 | --- | --- | --- |
@@ -46,19 +52,19 @@ Store default local datasource settings and ordinary application configuration i
 
 ## Start the complete application
 
-From the repository root, once implementation exists:
+From the repository root with a working Docker engine:
 
 ```bash
 docker compose up --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000). First startup creates the schema and demo fixtures. Check API readiness with:
+Open [http://localhost:3000](http://localhost:3000). The bootstrap serves the coming-soon page. Check its API connection with:
 
 ```bash
-curl -i http://localhost:3000/api/users
+curl -i http://localhost:3000/api/health
 ```
 
-Expected: `200` with Alex and Maria and string-formatted balances. A subsequent startup must preserve changed balances and existing parking/payment records.
+Expected: `200` with `{"status":"UP"}`. After the persistence and catalog phases, first startup will also create the schema and demo fixtures, and `/api/users` will return Alex and Maria. Persistence of changed balances and records will be verified when those features exist.
 
 For background operation:
 
@@ -70,7 +76,7 @@ docker compose logs --tail=100 backend
 
 ## Local backend and frontend development
 
-Start only PostgreSQL from the root:
+For the current bootstrap, skip database startup. Once database integration is added, start only PostgreSQL from the root:
 
 ```bash
 docker compose up -d postgres
@@ -102,7 +108,7 @@ From `backend/`:
 ./mvnw verify
 ```
 
-Configure Surefire for `*Test` unit/validation tests and Failsafe for `*IT` PostgreSQL integration tests. `verify` includes both and requires the dedicated test database described below. Normal application image packaging and full integration verification are separate steps; a successful Docker build alone is not evidence that all business tests passed.
+The current `verify` command packages the bootstrap application; no application test cases exist yet. As the features are implemented, use Surefire for `*Test` unit/validation tests and configure Failsafe for `*IT` PostgreSQL integration tests. At that point `verify` will require the dedicated test database below. A successful build alone is not evidence that business tests passed.
 
 From `frontend/`:
 
@@ -111,7 +117,7 @@ npm ci
 npm run build
 ```
 
-Add and document any lint or automated UI-test command when the corresponding tool is actually introduced. No frontend test runner is mandated by the initial specification.
+No lint or frontend test runner has been added. Add and document those commands when the corresponding tool is introduced. Temporary browser checks used during bootstrap are recorded in its checkpoint.
 
 ## Dedicated integration database
 
@@ -215,4 +221,4 @@ Use this reset only when intending to return to seed data. PostgreSQL environmen
 | Data disappears after restart | Verify named volume configuration and that the volume was not removed |
 | Seed balances do not reappear | This is expected on an existing volume; balances are persistent |
 
-Update this guide with exact versions and observed commands when bootstrap and packaging are implemented.
+Pinned versions and observed bootstrap results are recorded in [checkpoint 001](checkpoints/001-bootstrap.md). Update this guide as persistence, business features, and container verification are completed.

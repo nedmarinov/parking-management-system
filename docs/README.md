@@ -1,6 +1,6 @@
 # Documentation
 
-These documents specify the first implementation of the Parking Management System. No application features are implemented yet. A specification marked **Ready** has enough detail to implement; it does not indicate delivered functionality.
+These documents specify the first implementation of the Parking Management System. The [Phase 1 bootstrap](checkpoints/001-bootstrap.md) is ready for review; business features are not implemented yet. A specification marked **Ready** has enough detail to implement; it does not indicate delivered functionality.
 
 ## Reading order
 
@@ -36,6 +36,7 @@ These documents specify the first implementation of the Parking Management Syste
 | `development.md` | Planned setup and operational commands |
 | `testing.md` | Verification method and release smoke test |
 | `PLAN.md` | Scope, implementation order, delivery tracking |
+| `checkpoints/` | Completed implementation increments, observed verification, and review instructions |
 
 Examples illustrate their linked contracts. When behavior changes, update the owning document and affected examples in the same change. Resolve contradictions before implementing the affected behavior.
 
