@@ -1,6 +1,6 @@
 # 004 — Parking Payments
 
-Status: Backend implemented; UI pending (Phase 9).
+Status: Implemented (backend and UI); browser review pending.
 
 ## Purpose
 

@@ -1,6 +1,6 @@
 # 001 — Demo User Selection
 
-Status: Ready — not implemented.
+Status: Implemented (backend and UI); browser review pending.
 
 ## Purpose
 

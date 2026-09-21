@@ -109,16 +109,17 @@ From `backend/`:
 ./mvnw verify
 ```
 
-The current `verify` command packages the bootstrap application; no application test cases exist yet. As the features are implemented, use Surefire for `*Test` unit/validation tests and configure Failsafe for `*IT` PostgreSQL integration tests. At that point `verify` will require the dedicated test database below. A successful build alone is not evidence that business tests passed.
+Surefire runs `*Test` unit and web-slice tests; Failsafe runs `*IT` PostgreSQL integration tests during `verify`, which therefore requires the dedicated test database below.
 
 From `frontend/`:
 
 ```bash
 npm ci
+npm test
 npm run build
 ```
 
-No lint or frontend test runner has been added. Add and document those commands when the corresponding tool is introduced. Temporary browser checks used during bootstrap are recorded in its checkpoint.
+`npm test` runs the Vitest unit tests. No linter has been added.
 
 ## Dedicated integration database
 

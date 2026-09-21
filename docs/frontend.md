@@ -1,6 +1,6 @@
 # Frontend Behavior
 
-Status: The React/Vite/shadcn foundation and a coming-soon page are implemented. The user flows below remain planned. See the [bootstrap checkpoint](checkpoints/001-bootstrap.md).
+Status: Implemented as described below; browser review pending. `npm test` runs Vitest unit tests for formatting/top-up validation, the API client (error kinds, timeouts, aborts), and the stale-response request tracker.
 
 ## Structure
 

@@ -1,6 +1,6 @@
 # 006 — City and Zone Selection
 
-Status: Ready — not implemented.
+Status: Implemented (backend and UI); browser review pending.
 
 ## Purpose
 
