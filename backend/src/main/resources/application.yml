@@ -1,6 +1,18 @@
 spring:
   application:
     name: parking-management-system
+  datasource:
+    url: jdbc:postgresql://localhost:5432/parking
+    username: parking
+    password: parking
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
 
 server:
   port: 8080

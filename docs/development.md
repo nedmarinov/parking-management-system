@@ -20,7 +20,7 @@ The Dockerfiles, Nginx configuration, database container, and volume are present
 | --- | --- | --- |
 | `frontend` | Nginx serving the React production build and proxying `/api` | `http://localhost:3000` |
 | `backend` | Spring Boot listening on container port 8080 | Reached through frontend in the full stack |
-| `postgres` | PostgreSQL with a named data volume | Publish `127.0.0.1:5432:5432` for local development and integration tests |
+| `postgres` | PostgreSQL with a named data volume | Publish `127.0.0.1:${POSTGRES_PORT:-5432}` for local development and integration tests |
 
 PostgreSQL has a `pg_isready` health check. Backend depends on a healthy database, and frontend depends on backend health. The current backend check uses `/api/health`; switch to database-backed `/api/cities` when that endpoint exists. Flyway startup migrations will be added in Phase 2. The backend runtime image installs curl for its health check.
 
@@ -35,6 +35,7 @@ The root `.env.example` documents defaults, and local `.env` files are ignored b
 | `POSTGRES_DB` | `parking` | PostgreSQL and Compose datasource construction |
 | `POSTGRES_USER` | `parking` | PostgreSQL and backend username |
 | `POSTGRES_PASSWORD` | `parking` | PostgreSQL and backend password |
+| `POSTGRES_PORT` | `5432` | Host port for PostgreSQL; change it if 5432 is taken, and point `SPRING_DATASOURCE_URL`/`TEST_DATABASE_URL` at the same port |
 
 Set these Spring configuration values in the backend Compose service:
 

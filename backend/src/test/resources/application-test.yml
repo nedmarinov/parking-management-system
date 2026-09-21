@@ -1,0 +1,9 @@
+# Integration tests require an explicitly designated database whose name ends in "_test".
+# There is intentionally no fallback to the development datasource.
+spring:
+  datasource:
+    url: ${TEST_DATABASE_URL}
+    username: ${TEST_DATABASE_USERNAME}
+    password: ${TEST_DATABASE_PASSWORD}
+  flyway:
+    clean-disabled: false

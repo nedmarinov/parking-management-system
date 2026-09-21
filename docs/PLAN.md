@@ -1,10 +1,10 @@
 # Implementation Plan
 
-Status: In progress — Phase 1 bootstrap is complete; Phase 2 is next. Business features and database integration have not started.
+Status: In progress — Phases 1–2 are complete; Phase 3 (domain and repositories) is next. Business features have not started.
 
 ## Current checkpoint
 
-[001 — Bootstrap](checkpoints/001-bootstrap.md) is complete. Both applications build, the backend health endpoint responds, and Compose configuration validates. Container execution remains unverified because the local Docker engine is unavailable. Phase 2 (persistence and migrations) is next.
+Phase 2 (persistence) is complete. Flyway `V1`/`V2` create the [schema](database.md) and demo data; Hibernate runs with `validate`. `MigrationIT` (8 tests, `./mvnw verify` against `parking_test`) covers the empty-database migration, seed data, identity sequences, no reseeding on rerun, and the key constraints. A real application start migrated the Compose database and a restart preserved a changed balance. The integration profile refuses any database whose name does not end in `_test`. Full Compose image builds remain unverified. See [001 — Bootstrap](checkpoints/001-bootstrap.md) for the earlier checkpoint.
 
 ## Objective
 
@@ -36,10 +36,10 @@ Tests should accompany business implementation. The final verification phase con
 
 ## Delivery checklist
 
-- [ ] Source code is stored in a Git repository.
+- [x] Source code is stored in a Git repository.
 - [x] Java 21 / Spring Boot backend builds.
 - [x] React frontend builds.
-- [ ] PostgreSQL schema and demo data are managed by Flyway.
+- [x] PostgreSQL schema and demo data are managed by Flyway.
 - [ ] At least two demo users and three vehicles are available.
 - [ ] User ownership is enforced on applicable operations.
 - [ ] Sofia and Plovdiv expose multiple active zones.

@@ -1,6 +1,6 @@
 # Database Design
 
-Status: Ready — schema and migrations remain to be implemented.
+Status: Schema and demo-data migrations implemented and verified against PostgreSQL; JPA mappings are pending (Phase 3).
 
 ## Ownership and migrations
 
