@@ -1,9 +1,13 @@
 package com.example.parking.service;
 
+import com.example.parking.dto.BalanceResponse;
+import com.example.parking.dto.Money;
 import com.example.parking.dto.UserResponse;
+import com.example.parking.entity.User;
 import com.example.parking.exception.ApiException;
 import com.example.parking.exception.ErrorCode;
 import com.example.parking.repository.UserRepository;
+import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +29,18 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponse getUser(Long userId) {
         return users.findById(userId).map(UserResponse::from).orElseThrow(UserService::userNotFound);
+    }
+
+    /** Adds a validated amount under the user lock so concurrent balance changes serialize. */
+    @Transactional
+    public BalanceResponse topUp(Long userId, BigDecimal amount) {
+        User user = users.findByIdForUpdate(userId).orElseThrow(UserService::userNotFound);
+        BigDecimal newBalance = user.getBalance().add(amount);
+        if (newBalance.compareTo(Money.MAX) > 0) {
+            throw new ApiException(ErrorCode.BALANCE_LIMIT_EXCEEDED, "Top-up would exceed the maximum balance");
+        }
+        user.setBalance(newBalance);
+        return new BalanceResponse(user.getId(), Money.format(newBalance));
     }
 
     static ApiException userNotFound() {

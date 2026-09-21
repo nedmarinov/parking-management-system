@@ -6,6 +6,9 @@ import java.math.RoundingMode;
 /** Formats stored money as the API's two-decimal string. */
 public final class Money {
 
+    /** Largest value that fits numeric(12,2). */
+    public static final BigDecimal MAX = new BigDecimal("9999999999.99");
+
     private Money() {
     }
 

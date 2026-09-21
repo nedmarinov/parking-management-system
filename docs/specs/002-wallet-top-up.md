@@ -1,6 +1,6 @@
 # 002 — Wallet Top-Up
 
-Status: Ready — not implemented.
+Status: Backend implemented; UI pending (Phase 9).
 
 ## Purpose
 
@@ -54,7 +54,7 @@ Keep input as a string with decimal input mode. The UI may trim surrounding whit
 
 Unit-test arithmetic and limit handling; exercise HTTP binding and decimal validation using real request bodies; use PostgreSQL transactions for concurrent top-ups and payment/top-up interactions. A mocked repository alone cannot prove absence of lost updates.
 
-Verification performed: none; implementation is pending.
+Verification performed: `TopUpAmountTest`, `WalletApiIT`, and `TopUpConcurrencyIT` cover format/range validation, JSON type checks, exact increases, repeat requests, limit handling, unknown users, and concurrent top-ups. Top-up racing payment is verified with payments (Phase 7).
 
 ## Open questions
 

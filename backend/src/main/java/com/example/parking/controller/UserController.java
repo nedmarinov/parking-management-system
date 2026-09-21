@@ -1,13 +1,18 @@
 package com.example.parking.controller;
 
+import com.example.parking.dto.BalanceResponse;
+import com.example.parking.dto.TopUpRequest;
 import com.example.parking.dto.UserResponse;
 import com.example.parking.dto.VehicleResponse;
+import com.example.parking.service.TopUpAmount;
 import com.example.parking.service.UserService;
 import com.example.parking.service.VehicleService;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,6 +36,11 @@ public class UserController {
     @GetMapping("/{userId}")
     public UserResponse getUser(@PathVariable @Positive Long userId) {
         return userService.getUser(userId);
+    }
+
+    @PostMapping("/{userId}/top-up")
+    public BalanceResponse topUp(@PathVariable @Positive Long userId, @RequestBody TopUpRequest request) {
+        return userService.topUp(userId, TopUpAmount.parse(request.amount()));
     }
 
     @GetMapping("/{userId}/vehicles")
