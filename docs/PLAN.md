@@ -1,10 +1,10 @@
 # Implementation Plan
 
-Status: In progress — Phases 1–6 are complete; Phase 7 (payment and history) is next.
+Status: In progress — Phases 1–7 are complete; the backend business flow is implemented. Phase 8 (API completion) is next.
 
 ## Current checkpoint
 
-Phase 6 (parking) is complete: start, active list, and stop follow the API contract with captured rates, millisecond UTC timestamps, started-hour pricing in `PricingService`, and user-then-session locking; the active-vehicle index is translated to `VEHICLE_ALREADY_PARKED` as a backstop. `PricingServiceTest` (14), `ParkingApiIT` (24), and `ParkingConcurrencyIT` (racing starts and stops) pass. Phase 5 (wallet) is complete: `POST /api/users/{id}/top-up` validates the JSON string token and exact format without rounding, enforces the inclusive balance limit, and updates under the user lock. `TopUpAmountTest` (29 unit cases), `WalletApiIT` (22 HTTP cases), and `TopUpConcurrencyIT` (two top-ups queued on a held row lock both apply) pass. Phase 4 (user and catalog reads) is complete: `GET /api/users`, `/api/users/{id}`, `/api/users/{id}/vehicles`, `/api/cities`, and `/api/cities/{id}/zones` follow the API contract, with the shared `{code, message}` error format, `INVALID_REQUEST` for bad IDs, and `USER_NOT_FOUND`/`CITY_NOT_FOUND`. `CatalogApiIT` (17 cases) checks exact JSON, ordering, empty lists, and errors. The frontend does not use these endpoints yet. Phase 3 (domain and repositories) is complete: JPA entities pass Hibernate schema validation, and `RepositoryIT` (5 tests) covers documented list ordering, owner-scoped vehicle lookup, session/payment round trips with fetch-joined details, and a real row lock on the user. A UTC `Clock` bean is configured. Phase 2 (persistence) is complete. Flyway `V1`/`V2` create the [schema](database.md) and demo data; Hibernate runs with `validate`. `MigrationIT` (8 tests, `./mvnw verify` against `parking_test`) covers the empty-database migration, seed data, identity sequences, no reseeding on rerun, and the key constraints. A real application start migrated the Compose database and a restart preserved a changed balance. The integration profile refuses any database whose name does not end in `_test`. Full Compose image builds remain unverified. See [001 — Bootstrap](checkpoints/001-bootstrap.md) for the earlier checkpoint.
+Phase 7 (payment and history) is complete: `POST /api/parkings/{id}/payment` deducts the stored amount and inserts the payment in one transaction under user-then-session locks; `GET /api/users/{id}/parkings/history` returns completed sessions with payment status. `PaymentApiIT` (12, including the full start→stop→unpaid history→pay→paid history flow and a rejected-then-retried payment), `PaymentConcurrencyIT` (duplicate payments, two sessions with funds for one, top-up racing payment), and `PaymentAtomicityIT` (forced failure after the deduction is flushed rolls back everything) pass. Phase 6 (parking) is complete: start, active list, and stop follow the API contract with captured rates, millisecond UTC timestamps, started-hour pricing in `PricingService`, and user-then-session locking; the active-vehicle index is translated to `VEHICLE_ALREADY_PARKED` as a backstop. `PricingServiceTest` (14), `ParkingApiIT` (24), and `ParkingConcurrencyIT` (racing starts and stops) pass. Phase 5 (wallet) is complete: `POST /api/users/{id}/top-up` validates the JSON string token and exact format without rounding, enforces the inclusive balance limit, and updates under the user lock. `TopUpAmountTest` (29 unit cases), `WalletApiIT` (22 HTTP cases), and `TopUpConcurrencyIT` (two top-ups queued on a held row lock both apply) pass. Phase 4 (user and catalog reads) is complete: `GET /api/users`, `/api/users/{id}`, `/api/users/{id}/vehicles`, `/api/cities`, and `/api/cities/{id}/zones` follow the API contract, with the shared `{code, message}` error format, `INVALID_REQUEST` for bad IDs, and `USER_NOT_FOUND`/`CITY_NOT_FOUND`. `CatalogApiIT` (17 cases) checks exact JSON, ordering, empty lists, and errors. The frontend does not use these endpoints yet. Phase 3 (domain and repositories) is complete: JPA entities pass Hibernate schema validation, and `RepositoryIT` (5 tests) covers documented list ordering, owner-scoped vehicle lookup, session/payment round trips with fetch-joined details, and a real row lock on the user. A UTC `Clock` bean is configured. Phase 2 (persistence) is complete. Flyway `V1`/`V2` create the [schema](database.md) and demo data; Hibernate runs with `validate`. `MigrationIT` (8 tests, `./mvnw verify` against `parking_test`) covers the empty-database migration, seed data, identity sequences, no reseeding on rerun, and the key constraints. A real application start migrated the Compose database and a restart preserved a changed balance. The integration profile refuses any database whose name does not end in `_test`. Full Compose image builds remain unverified. See [001 — Bootstrap](checkpoints/001-bootstrap.md) for the earlier checkpoint.
 
 ## Objective
 
@@ -40,18 +40,18 @@ Tests should accompany business implementation. The final verification phase con
 - [x] Java 21 / Spring Boot backend builds.
 - [x] React frontend builds.
 - [x] PostgreSQL schema and demo data are managed by Flyway.
-- [ ] At least two demo users and three vehicles are available.
-- [ ] User ownership is enforced on applicable operations.
-- [ ] Sofia and Plovdiv expose multiple active zones.
-- [ ] Fictional balances and top-up work correctly.
-- [ ] Start and active parking support multiple vehicles per user.
-- [ ] Concurrent starts cannot create duplicate active sessions for a vehicle.
-- [ ] Stop records a final amount using the captured rate and exact stored duration.
-- [ ] Stop leaves parking unpaid.
-- [ ] Payment deducts the balance and creates one payment atomically.
-- [ ] Insufficient balance and duplicate payments leave state correct.
-- [ ] Completed sessions appear in history with payment information.
-- [ ] Critical unit, validation, and PostgreSQL integration tests pass.
+- [x] At least two demo users and three vehicles are available.
+- [x] User ownership is enforced on applicable operations.
+- [x] Sofia and Plovdiv expose multiple active zones.
+- [x] Fictional balances and top-up work correctly.
+- [x] Start and active parking support multiple vehicles per user.
+- [x] Concurrent starts cannot create duplicate active sessions for a vehicle.
+- [x] Stop records a final amount using the captured rate and exact stored duration.
+- [x] Stop leaves parking unpaid.
+- [x] Payment deducts the balance and creates one payment atomically.
+- [x] Insufficient balance and duplicate payments leave state correct.
+- [x] Completed sessions appear in history with payment information.
+- [x] Critical unit, validation, and PostgreSQL integration tests pass.
 - [ ] Frontend handles loading, empty, success, error, and stale-response cases.
 - [ ] `docker compose up --build` starts the complete application.
 - [ ] Restarting without deleting the volume preserves balances and records.

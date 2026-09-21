@@ -1,6 +1,6 @@
 # 005 — Parking History
 
-Status: Ready — not implemented.
+Status: Backend implemented; UI pending (Phase 9).
 
 ## Purpose
 
@@ -57,7 +57,7 @@ An unpaid item appears in both the unpaid section and overall completed history.
 
 Use repository/API tests for ownership, status filtering, sorting, and payment mapping. Exercise stop-to-history and pay-to-history in the integration flow. Verify persistence during the Compose smoke test and stale-response handling in the UI.
 
-Verification performed: none; implementation is pending.
+Verification performed: `PaymentApiIT` covers status filtering, ownership, ordering, empty history, unknown users, unpaid and paid mapping, and captured rates after a catalog change. Restart persistence and UI stale-response handling remain for Phases 9–11.
 
 ## Open questions
 

@@ -3,16 +3,11 @@ package com.example.parking.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.parking.dto.ParkingResponse;
-import com.example.parking.exception.ApiException;
 import com.example.parking.exception.ErrorCode;
 import com.example.parking.service.ParkingService;
-import java.sql.Connection;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -67,39 +62,7 @@ class ParkingConcurrencyIT {
                 .isEqualTo(winner.amount());
     }
 
-    /** Holds user 1's row lock until both actions are queued on it, then releases them together. */
-    @SafeVarargs
-    private List<Object> raceOnUserLock(Supplier<ParkingResponse>... actions) throws Exception {
-        List<CompletableFuture<Object>> futures;
-        try (Connection blocker = dataSource.getConnection()) {
-            blocker.setAutoCommit(false);
-            blocker.createStatement().execute("SELECT id FROM users WHERE id = 1 FOR UPDATE");
-            futures = Stream.of(actions).map(this::outcomeOf).toList();
-            awaitLockWaiters(actions.length);
-            blocker.commit();
-        }
-        return futures.stream().map(CompletableFuture::join).toList();
-    }
-
-    private CompletableFuture<Object> outcomeOf(Supplier<ParkingResponse> action) {
-        return CompletableFuture.supplyAsync(action::get).handle((result, error) -> {
-            if (error instanceof CompletionException && error.getCause() instanceof ApiException api) {
-                return api.getCode();
-            }
-            return error == null ? result : error;
-        });
-    }
-
-    private void awaitLockWaiters(int expected) throws InterruptedException {
-        for (int i = 0; i < 100; i++) {
-            Integer waiting = jdbc.queryForObject("""
-                    SELECT count(*) FROM pg_stat_activity
-                    WHERE datname = current_database() AND wait_event_type = 'Lock'""", Integer.class);
-            if (waiting != null && waiting >= expected) {
-                return;
-            }
-            Thread.sleep(50);
-        }
-        throw new AssertionError("Actions did not block on the user lock");
+    private List<Object> raceOnUserLock(Supplier<?>... actions) throws Exception {
+        return UserLockRace.run(dataSource, jdbc, 1L, List.of(actions));
     }
 }

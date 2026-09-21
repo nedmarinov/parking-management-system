@@ -4,6 +4,7 @@ import com.example.parking.dto.Money;
 import com.example.parking.dto.ParkingResponse;
 import com.example.parking.entity.ParkingSession;
 import com.example.parking.entity.ParkingZone;
+import com.example.parking.entity.Payment;
 import com.example.parking.entity.SessionStatus;
 import com.example.parking.entity.User;
 import com.example.parking.entity.Vehicle;
@@ -11,6 +12,7 @@ import com.example.parking.exception.ApiException;
 import com.example.parking.exception.ErrorCode;
 import com.example.parking.repository.ParkingSessionRepository;
 import com.example.parking.repository.ParkingZoneRepository;
+import com.example.parking.repository.PaymentRepository;
 import com.example.parking.repository.UserRepository;
 import com.example.parking.repository.VehicleRepository;
 import java.math.BigDecimal;
@@ -18,6 +20,9 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,15 +33,17 @@ public class ParkingService {
     private final VehicleRepository vehicles;
     private final ParkingZoneRepository zones;
     private final ParkingSessionRepository sessions;
+    private final PaymentRepository payments;
     private final PricingService pricing;
     private final Clock clock;
 
     public ParkingService(UserRepository users, VehicleRepository vehicles, ParkingZoneRepository zones,
-            ParkingSessionRepository sessions, PricingService pricing, Clock clock) {
+            ParkingSessionRepository sessions, PaymentRepository payments, PricingService pricing, Clock clock) {
         this.users = users;
         this.vehicles = vehicles;
         this.zones = zones;
         this.sessions = sessions;
+        this.payments = payments;
         this.pricing = pricing;
         this.clock = clock;
     }
@@ -85,6 +92,19 @@ public class ParkingService {
         return sessions.findWithDetailsByUserIdAndStatus(userId, SessionStatus.ACTIVE).stream()
                 .map(s -> ParkingResponse.from(s, null))
                 .toList();
+    }
+
+    /** Completed sessions, paid and unpaid, newest first. */
+    @Transactional(readOnly = true)
+    public List<ParkingResponse> listHistory(Long userId) {
+        if (!users.existsById(userId)) {
+            throw UserService.userNotFound();
+        }
+        List<ParkingSession> completed = sessions.findWithDetailsByUserIdAndStatus(userId, SessionStatus.COMPLETED);
+        Map<Long, Payment> paymentsBySession = payments
+                .findBySessionIdIn(completed.stream().map(ParkingSession::getId).toList()).stream()
+                .collect(Collectors.toMap(p -> p.getSession().getId(), Function.identity()));
+        return completed.stream().map(s -> ParkingResponse.from(s, paymentsBySession.get(s.getId()))).toList();
     }
 
     /** Locks the session after the user lock, reporting ownership before lifecycle state. */

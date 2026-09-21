@@ -1,6 +1,6 @@
 # 004 — Parking Payments
 
-Status: Ready — not implemented.
+Status: Backend implemented; UI pending (Phase 9).
 
 ## Purpose
 
@@ -71,7 +71,7 @@ Expose a Pay action only for completed unpaid items and display the stored charg
 
 Use service tests for eligibility and exact deduction. Use PostgreSQL integration tests for actual rollback, uniqueness, and concurrency. To establish atomicity, force a controlled failure within the transaction after an update has reached the database, then verify the original balance and no payment from a separate transaction. Do not treat Mockito interaction assertions as proof of rollback.
 
-Verification performed: none; implementation is pending.
+Verification performed: `PaymentApiIT` covers success, exact and equal-balance deduction, insufficient funds with top-up retry, repeat payment, zero amount, error order, and payment-before-end. `PaymentConcurrencyIT` covers duplicate payments, two sessions with funds for one, and top-up racing payment. `PaymentAtomicityIT` forces a failure after the deduction reaches PostgreSQL and confirms from a fresh transaction that nothing committed.
 
 ## Open questions
 
