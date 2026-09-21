@@ -5,6 +5,12 @@ spring:
     url: jdbc:postgresql://localhost:5432/parking
     username: parking
     password: parking
+  jackson:
+    # IDs must be JSON integers: no 1.5 -> 1 or "1" -> 1 coercion.
+    deserialization:
+      accept-float-as-int: false
+    mapper:
+      allow-coercion-of-scalars: false
   jpa:
     open-in-view: false
     hibernate:

@@ -21,6 +21,8 @@ public interface ParkingSessionRepository extends JpaRepository<ParkingSession, 
             order by s.startedAt desc, s.id desc""")
     List<ParkingSession> findWithDetailsByUserIdAndStatus(Long userId, SessionStatus status);
 
+    boolean existsByVehicleIdAndStatus(Long vehicleId, SessionStatus status);
+
     /** Take only after the owning user's lock (user, then session). */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select s from ParkingSession s where s.id = :id")

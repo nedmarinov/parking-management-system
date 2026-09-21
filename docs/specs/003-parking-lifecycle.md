@@ -1,6 +1,6 @@
 # 003 — Parking Lifecycle and Pricing
 
-Status: Ready — not implemented.
+Status: Backend implemented; UI pending (Phase 9).
 
 ## Purpose
 
@@ -104,7 +104,7 @@ Selecting another city affects future starts only. It must not hide already-acti
 
 Use parameterized pricing unit tests, service tests for ownership and state rules, and fixed clocks. Use PostgreSQL integration tests for competing starts/stops, state constraints, and captured-rate persistence. Exercise the start/stop flow through HTTP as part of the integration smoke test.
 
-Verification performed: none; implementation is pending.
+Verification performed: `PricingServiceTest` covers the pricing table, zero rate, midnight, a Sofia DST jump, and negative duration. `ParkingApiIT` covers start/stop/active-list responses and errors, captured rate after a catalog change, stop after zone deactivation, clock-before-start and amount-limit rejections, and strict ID binding. `ParkingConcurrencyIT` races two starts and two stops on a held user lock.
 
 ## Open questions
 
