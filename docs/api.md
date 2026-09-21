@@ -255,7 +255,7 @@ All application errors use a stable machine-readable code and a human-readable m
 | 409 | `CLOCK_BEFORE_SESSION_TIME` | Stop time is before start or payment time is before end |
 | 500 | `INTERNAL_ERROR` | Unexpected application, database, or stored-invariant failure |
 
-Return simple messages without stack traces, SQL, or entity dumps. Client validation errors take precedence over service validation because request binding happens first. Services resolve the selected user before dependent resource/ownership checks. Check ownership before reporting a session's lifecycle or payment state.
+Unknown routes, unsupported methods, and non-JSON bodies keep their HTTP status (`404`, `405`, `415`) with code `INVALID_REQUEST`. Return simple messages without stack traces, SQL, or entity dumps. Client validation errors take precedence over service validation because request binding happens first. Services resolve the selected user before dependent resource/ownership checks. Check ownership before reporting a session's lifecycle or payment state.
 
 ## Duplicate requests and ambiguous outcomes
 

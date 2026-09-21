@@ -169,6 +169,18 @@ class ParkingApiIT {
     }
 
     @Test
+    void clientCannotSupplyServerControlledFields() throws Exception {
+        mvc.perform(post("/api/parkings").contentType(MediaType.APPLICATION_JSON).content("""
+                        {"userId":1,"vehicleId":1,"zoneId":1,"hourlyRate":"0.00","startedAt":"2020-01-01T00:00:00.000Z",
+                         "status":"COMPLETED","amount":"0.00"}"""))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.hourlyRate").value("2.00"))
+                .andExpect(jsonPath("$.startedAt").value("2026-09-21T10:15:00.000Z"))
+                .andExpect(jsonPath("$.status").value("ACTIVE"))
+                .andExpect(jsonPath("$.amount").isEmpty());
+    }
+
+    @Test
     void activeListForUnknownUserIsNotFound() throws Exception {
         expectError(mvc.perform(get("/api/users/999/parkings/active")), 404, "USER_NOT_FOUND");
     }
