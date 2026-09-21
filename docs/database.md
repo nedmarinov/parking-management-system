@@ -1,6 +1,6 @@
 # Database Design
 
-Status: Schema and demo-data migrations implemented and verified against PostgreSQL; JPA mappings are pending (Phase 3).
+Status: Schema and demo-data migrations implemented and verified against PostgreSQL; JPA entities and repositories are implemented and validated.
 
 ## Ownership and migrations
 

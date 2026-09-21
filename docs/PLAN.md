@@ -1,10 +1,10 @@
 # Implementation Plan
 
-Status: In progress — Phases 1–2 are complete; Phase 3 (domain and repositories) is next. Business features have not started.
+Status: In progress — Phases 1–3 are complete; Phase 4 (user and catalog reads) is next. Business features have not started.
 
 ## Current checkpoint
 
-Phase 2 (persistence) is complete. Flyway `V1`/`V2` create the [schema](database.md) and demo data; Hibernate runs with `validate`. `MigrationIT` (8 tests, `./mvnw verify` against `parking_test`) covers the empty-database migration, seed data, identity sequences, no reseeding on rerun, and the key constraints. A real application start migrated the Compose database and a restart preserved a changed balance. The integration profile refuses any database whose name does not end in `_test`. Full Compose image builds remain unverified. See [001 — Bootstrap](checkpoints/001-bootstrap.md) for the earlier checkpoint.
+Phase 3 (domain and repositories) is complete: JPA entities pass Hibernate schema validation, and `RepositoryIT` (5 tests) covers documented list ordering, owner-scoped vehicle lookup, session/payment round trips with fetch-joined details, and a real row lock on the user. A UTC `Clock` bean is configured. Phase 2 (persistence) is complete. Flyway `V1`/`V2` create the [schema](database.md) and demo data; Hibernate runs with `validate`. `MigrationIT` (8 tests, `./mvnw verify` against `parking_test`) covers the empty-database migration, seed data, identity sequences, no reseeding on rerun, and the key constraints. A real application start migrated the Compose database and a restart preserved a changed balance. The integration profile refuses any database whose name does not end in `_test`. Full Compose image builds remain unverified. See [001 — Bootstrap](checkpoints/001-bootstrap.md) for the earlier checkpoint.
 
 ## Objective
 
