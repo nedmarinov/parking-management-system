@@ -1,6 +1,6 @@
 # 001 — Bootstrap Checkpoint
 
-Status: Ready for review. Implementation changes are uncommitted. Database and business-feature work have not started.
+Status: Complete and committed. Container builds and Compose startup remain unverified (see below). Database and business-feature work have not started.
 
 ## Delivered scope
 
@@ -97,4 +97,4 @@ Then open `http://localhost:3000` and check `/api/health` through that port. Thi
 
 ## Next increment
 
-After this checkpoint is validated, record it in Git and begin Phase 2: add PostgreSQL/Flyway dependencies, configure persistence, and implement schema and demo-data migrations. All six business feature specs remain Ready, not Implemented.
+Begin Phase 2: add PostgreSQL/Flyway dependencies, configure persistence, and implement schema and demo-data migrations. All six business feature specs remain Ready, not Implemented.

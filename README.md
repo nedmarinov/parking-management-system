@@ -2,7 +2,7 @@
 
 A full-stack prototype for managing paid parking across multiple cities. Demo users select a vehicle and parking zone, start and stop parking, and pay using a fictional account balance.
 
-**Project status:** Phase 1 bootstrap is implemented and ready for review. The backend, frontend shell, Maven wrapper, pinned dependencies, and Docker Compose files are present. Parking features, database integration, and migrations are still pending. See the [bootstrap checkpoint](docs/checkpoints/001-bootstrap.md) for verification and review instructions.
+**Project status:** Phase 1 bootstrap is complete. The backend, frontend shell, Maven wrapper, pinned dependencies, and Docker Compose files are present. Parking features, database integration, and migrations are still pending. See the [bootstrap checkpoint](docs/checkpoints/001-bootstrap.md) for verification and review instructions.
 
 ## Intended user flow
 

@@ -1,10 +1,10 @@
 # Implementation Plan
 
-Status: In progress — Phase 1 bootstrap is implemented and awaiting review. Business features and database integration have not started.
+Status: In progress — Phase 1 bootstrap is complete; Phase 2 is next. Business features and database integration have not started.
 
 ## Current checkpoint
 
-Review [001 — Bootstrap](checkpoints/001-bootstrap.md). Both applications build, the backend health endpoint responds, and Compose configuration validates. Container execution remains unverified because the local Docker engine is unavailable. The generated lockfile and implementation files await the review/commit checkpoint. Phase 2 is next after validation of this increment.
+[001 — Bootstrap](checkpoints/001-bootstrap.md) is complete. Both applications build, the backend health endpoint responds, and Compose configuration validates. Container execution remains unverified because the local Docker engine is unavailable. Phase 2 (persistence and migrations) is next.
 
 ## Objective
 

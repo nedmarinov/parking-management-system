@@ -1,6 +1,6 @@
 # Documentation
 
-These documents specify the first implementation of the Parking Management System. The [Phase 1 bootstrap](checkpoints/001-bootstrap.md) is ready for review; business features are not implemented yet. A specification marked **Ready** has enough detail to implement; it does not indicate delivered functionality.
+These documents specify the first implementation of the Parking Management System. The [Phase 1 bootstrap](checkpoints/001-bootstrap.md) is complete; business features are not implemented yet. A specification marked **Ready** has enough detail to implement; it does not indicate delivered functionality.
 
 ## Reading order
 
