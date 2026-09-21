@@ -5,11 +5,12 @@ These documents specify the first implementation of the Parking Management Syste
 ## Reading order
 
 1. [Project overview](../README.md): purpose, scope, and intended startup.
-2. [Implementation plan](PLAN.md): delivery sequence and definition of done.
-3. [Architecture](architecture.md): boundaries and shared technical decisions.
-4. [Feature specifications](#feature-specifications): detailed business behavior.
-5. [API contract](api.md), [database design](database.md), and [frontend behavior](frontend.md).
-6. [Development guide](development.md) and [testing strategy](testing.md).
+2. [Development methodology](methodology.md): how specifications, AI assistance, implementation, and verification fit together.
+3. [Implementation plan](PLAN.md): delivery sequence and definition of done.
+4. [Architecture](architecture.md): boundaries and shared technical decisions.
+5. [Feature specifications](#feature-specifications): detailed business behavior.
+6. [API contract](api.md), [database design](database.md), and [frontend behavior](frontend.md).
+7. [Development guide](development.md) and [testing strategy](testing.md).
 
 ## Feature specifications
 
@@ -26,6 +27,7 @@ These documents specify the first implementation of the Parking Management Syste
 
 | Document | Authoritative content |
 | --- | --- |
+| `methodology.md` | Development workflow, responsibilities, feature status, and completion evidence |
 | Feature specs | Business rules and feature acceptance criteria |
 | `api.md` | Routes, request/response shapes, status codes, error codes |
 | `database.md` | Tables, columns, constraints, indexes, migrations, seed data |
@@ -39,14 +41,9 @@ Examples illustrate their linked contracts. When behavior changes, update the ow
 
 ## Adding or changing functionality
 
-1. For a substantial behavior change, copy [the feature template](specs/_template.md) to the next numbered filename.
-2. Describe the user outcome, rules, failure cases, dependencies, and observable acceptance criteria.
-3. Resolve required decisions and mark the specification **Ready**.
-4. Update shared contracts where the feature changes API, database, architecture, or UI behavior.
-5. Implement the feature and relevant tests. Mark it **Implemented** only after its acceptance criteria pass; record the verification performed.
-6. Update the plan's progress checklist and project status when applicable.
+Follow the [development workflow](methodology.md#how-work-progresses). For a substantial new feature, copy [the feature template](specs/_template.md) to the next numbered filename. For a change to an existing feature, update its specification and affected shared contracts.
 
-Use **Draft**, **Ready**, **In progress**, and **Implemented** as status values. A task description is sufficient for small fixes and cosmetic changes that do not introduce new behavior. Add a separate decision document only when a complex decision needs more explanation than the architecture document can hold.
+Use the [feature status definitions](methodology.md#feature-status) and record verification before marking work Implemented. A task description is sufficient for small fixes and cosmetic changes that do not introduce new behavior. Add a separate decision document only when a complex decision needs more explanation than the architecture document can hold.
 
 ## Original plan and resolved decisions
 

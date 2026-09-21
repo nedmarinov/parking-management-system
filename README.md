@@ -36,6 +36,7 @@ parking-management-system/
 ├── PLAN.MD                      # Navigation to the maintained plan
 ├── docs/                        # Specifications and development guidance
 │   ├── PLAN.md
+│   ├── methodology.md
 │   ├── architecture.md
 │   ├── api.md
 │   ├── database.md
@@ -84,4 +85,4 @@ The planned backend commands, run from `backend/`, are:
 
 ## Documentation
 
-Start with the [documentation index](docs/README.md), then the [implementation plan](docs/PLAN.md). The [feature specifications](docs/README.md#feature-specifications) define behavior and acceptance criteria. The [API contract](docs/api.md), [database design](docs/database.md), and [architecture](docs/architecture.md) define shared implementation contracts.
+Start with the [documentation index](docs/README.md). The [methodology](docs/methodology.md) explains our specification-driven, AI-assisted workflow, and the [implementation plan](docs/PLAN.md) defines the delivery sequence. The [feature specifications](docs/README.md#feature-specifications) define behavior and acceptance criteria. The [API contract](docs/api.md), [database design](docs/database.md), and [architecture](docs/architecture.md) define shared implementation contracts.
