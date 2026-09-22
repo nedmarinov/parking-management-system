@@ -20,7 +20,7 @@ Depends on [demo users](001-demo-user-selection.md) and [city/zone selection](00
 2. The vehicle must belong to the selected user and the zone must be active.
 3. One vehicle can have at most one active session across all zones and cities.
 4. Different owned vehicles can be active simultaneously. There is no per-user active-session limit.
-5. A zero balance or a completed unpaid session does not prevent starting new parking.
+5. A zero balance does not prevent starting. A vehicle with a completed unpaid session cannot start again until that session is paid (`VEHICLE_HAS_UNPAID_PARKING`); the user's other vehicles are unaffected. The check runs under the user lock, which payment also takes, so it is race-free without a database rule.
 6. The backend stores the user, vehicle, zone, captured hourly rate, and server start instant. The initial status is `ACTIVE`; end time and amount are null; no payment exists.
 7. Use the [shared locking policy](../architecture.md#transactions-and-concurrent-requests) and required active-vehicle unique index, including for simultaneous requests.
 
@@ -90,7 +90,7 @@ Selecting another city affects future starts only. It must not hide already-acti
 - [ ] Missing resources, ownership violations, and inactive zones return the documented errors without inserting a session.
 - [ ] Two active sessions can exist for Alex's two different vehicles.
 - [ ] Two starts for the same vehicle result in exactly one active row and one conflict.
-- [ ] A completed unpaid session does not prevent another start for that vehicle.
+- [ ] A completed unpaid session prevents another start for that vehicle until it is paid, and does not affect the user's other vehicles.
 - [ ] Active listing contains only the selected user's active sessions in the documented order.
 - [ ] All pricing table cases produce the expected charge.
 - [ ] Crossing midnight or a daylight-saving transition uses elapsed UTC time correctly.

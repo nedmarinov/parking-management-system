@@ -20,6 +20,14 @@ describe("startBlocker", () => {
     expect(startBlocker({ ...ready, parkedIds: new Set() })).toBeNull();
   });
 
+  it("blocks a vehicle with unpaid parking until it is paid, without affecting other vehicles", () => {
+    expect(startBlocker({ ...ready, unpaidIds: new Set([1]) })).toBe(
+      "CA1234AB has unpaid parking. Pay it first, or choose another vehicle.",
+    );
+    expect(startBlocker({ ...ready, unpaidIds: new Set([1]), vehicleId: "2" })).toBeNull();
+    expect(startBlocker({ ...ready, unpaidIds: new Set() })).toBeNull();
+  });
+
   it.each([
     [{ vehicles: null }, "Loading vehicles…"],
     [{ vehicles: [] }, "This user has no vehicles."],

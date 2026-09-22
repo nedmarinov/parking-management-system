@@ -64,6 +64,11 @@ public class ParkingService {
         if (sessions.existsByVehicleIdAndStatus(vehicleId, SessionStatus.ACTIVE)) {
             throw vehicleAlreadyParked();
         }
+        // Race-free under the user lock: paying this vehicle's sessions requires the same lock.
+        if (sessions.existsUnpaidByVehicleId(vehicleId)) {
+            throw new ApiException(ErrorCode.VEHICLE_HAS_UNPAID_PARKING,
+                    "Vehicle has unpaid parking; pay it before parking again");
+        }
         ParkingSession session = sessions.saveAndFlush(new ParkingSession(user, vehicle, zone, now()));
         return ParkingResponse.from(session, null);
     }

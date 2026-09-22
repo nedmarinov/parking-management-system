@@ -96,6 +96,24 @@ class PaymentConcurrencyIT {
         }
     }
 
+    @Test
+    void restartRacingPaymentFollowsTheSerializedOrder() throws Exception {
+        long id = completedSession(1L, Duration.ofMinutes(30));
+
+        List<Object> outcomes = race(() -> parkingService.start(1L, 1L, 1L), () -> paymentService.pay(id, 1L));
+
+        assertThat(outcomes.get(1)).isInstanceOf(PaymentResponse.class);
+        int active = jdbc.queryForObject("SELECT count(*) FROM parking_sessions WHERE status = 'ACTIVE'", Integer.class);
+        if (outcomes.get(0) instanceof ErrorCode code) {
+            // Start ran first, while the earlier parking was still unpaid.
+            assertThat(code).isEqualTo(ErrorCode.VEHICLE_HAS_UNPAID_PARKING);
+            assertThat(active).isZero();
+        } else {
+            // Payment ran first, so the vehicle was free to park again.
+            assertThat(active).isEqualTo(1);
+        }
+    }
+
     private long completedSession(long vehicleId, Duration duration) {
         long id = parkingService.start(1L, vehicleId, 1L).id();
         clock.advance(duration);

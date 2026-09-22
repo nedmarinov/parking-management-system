@@ -137,6 +137,7 @@ class PaymentApiIT {
     void historyExcludesActiveAndOtherUsersAndIsNewestFirst() throws Exception {
         long older = completedSession(1, 1, 1, Duration.ofMinutes(5));
         long newer = completedSession(1, 2, 2, Duration.ofMinutes(5));
+        act(older, "payment", 1).andExpect(status().isCreated()); // unpaid parking would block restarting vehicle 1
         startId(1, 1, 1);
         completedSession(2, 3, 3, Duration.ofMinutes(5));
         jdbc.update("UPDATE parking_zones SET price_per_hour = 9.00 WHERE id = 1");

@@ -160,7 +160,7 @@ Start, active-list, stop, and history endpoints share one shape. Rates in a sess
 
 Returns `201` and the active `ParkingResponse` above. The backend derives the city from the zone and the rate from the zone at start. No `cityId` is required in this request.
 
-Errors: invalid request, missing user/vehicle/zone, vehicle owned by another user, inactive zone, vehicle already active.
+Errors: invalid request, missing user/vehicle/zone, vehicle owned by another user, inactive zone, vehicle already active, vehicle has unpaid parking.
 
 ### List active parking
 
@@ -247,6 +247,7 @@ All application errors use a stable machine-readable code and a human-readable m
 | 404 | `ZONE_NOT_FOUND` | Zone does not exist |
 | 404 | `PARKING_NOT_FOUND` | Session does not exist |
 | 409 | `VEHICLE_ALREADY_PARKED` | Vehicle already has an active session |
+| 409 | `VEHICLE_HAS_UNPAID_PARKING` | Vehicle has a completed session that is not yet paid |
 | 409 | `PARKING_ALREADY_COMPLETED` | Stop requested for completed parking |
 | 409 | `PARKING_ALREADY_PAID` | Session already has a payment |
 | 409 | `INSUFFICIENT_BALANCE` | Balance is below the stored session amount |
@@ -259,6 +260,6 @@ Unknown routes, unsupported methods, and non-JSON bodies keep their HTTP status 
 
 ## Duplicate requests and ambiguous outcomes
 
-Repeated stop and payment requests return the corresponding `409`; they do not recalculate or charge again. An identical start while the session remains active returns `409`. A later start after completion can create a new session.
+Repeated stop and payment requests return the corresponding `409`; they do not recalculate or charge again. An identical start while the session remains active returns `409`. A later start after completion and payment can create a new session.
 
 Each accepted top-up request adds funds, so top-up is not idempotent. After a timeout or connection failure on a mutation, the UI must refresh the current state and ask the user to review it before issuing another action. Do not automatically retry mutation requests. Reads can be retried explicitly from the UI.

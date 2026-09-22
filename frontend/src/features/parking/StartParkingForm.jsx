@@ -7,7 +7,7 @@ import { useResource } from "@/hooks/useResource";
 import { formatMoney } from "@/lib/format";
 import { startBlocker } from "./startBlocker";
 
-export function StartParkingForm({ userId, vehicles, active, cities, busy, onStart, feedback }) {
+export function StartParkingForm({ userId, vehicles, active, history, cities, busy, onStart, feedback }) {
   // The vehicle choice belongs to one user; city and zone are shared catalog context and survive user changes.
   const [vehicleChoice, setVehicleChoice] = useState({ userId, vehicleId: "" });
   const [cityId, setCityId] = useState(null);
@@ -16,9 +16,13 @@ export function StartParkingForm({ userId, vehicles, active, cities, busy, onSta
 
   const vehicleId = vehicleChoice.userId === userId ? vehicleChoice.vehicleId : "";
   const parkedIds = new Set((active.data ?? []).map((session) => session.vehicle.id));
+  // The server enforces this rule; history only lets the form explain it in advance.
+  const unpaidIds = new Set(
+    (history.data ?? []).filter((session) => session.paymentStatus === "UNPAID").map((session) => session.vehicle.id),
+  );
   const selectedZone = zones.data?.find((zone) => String(zone.id) === zoneId) ?? null;
   const locked = busy !== null;
-  const blocker = startBlocker({ vehicles: vehicles.data, parkedIds, vehicleId, cityId, zones: zones.data, zoneId });
+  const blocker = startBlocker({ vehicles: vehicles.data, parkedIds, unpaidIds, vehicleId, cityId, zones: zones.data, zoneId });
   const canStart = !locked && blocker === null;
 
   // The selection is kept after a start: the button then shows the vehicle as parked, and becomes
@@ -45,14 +49,14 @@ export function StartParkingForm({ userId, vehicles, active, cities, busy, onSta
           >
             <option value="">Choose a vehicle</option>
             {vehicles.data?.map((vehicle) => (
-              <option key={vehicle.id} value={vehicle.id} disabled={parkedIds.has(vehicle.id)}>
+              <option key={vehicle.id} value={vehicle.id} disabled={parkedIds.has(vehicle.id) || unpaidIds.has(vehicle.id)}>
                 {vehicle.plateNumber}
-                {parkedIds.has(vehicle.id) ? " — already parked" : ""}
+                {parkedIds.has(vehicle.id) ? " — already parked" : unpaidIds.has(vehicle.id) ? " — unpaid parking" : ""}
               </option>
             ))}
           </select>
           <p id="vehicle-hint" className="mt-1.5 text-xs text-[#183c35]/65">
-            A vehicle that is already parked must be stopped before it can park again.
+            A vehicle can park again once its previous parking is stopped and paid.
           </p>
         </SectionState>
       </div>

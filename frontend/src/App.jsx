@@ -121,7 +121,7 @@ export default function App() {
       key: "start",
       feedbackFor: "start",
       action: (userId) => startParking(userId, vehicleId, zoneId),
-      refresh: ["active"],
+      refresh: ["active", "history"],
       success: (s) => `Parking started for ${s.vehicle.plateNumber} in ${s.zone.name}, ${s.zone.city.name}.`,
     });
 
@@ -172,6 +172,7 @@ export default function App() {
                   userId={selectedUserId}
                   vehicles={section("vehicles")}
                   active={section("active")}
+                  history={section("history")}
                   cities={cities}
                   busy={busy}
                   onStart={handleStart}

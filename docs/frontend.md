@@ -106,7 +106,7 @@ Centralize relative `/api` URL construction, JSON headers, response parsing, and
 - Support keyboard selection and activation; preserve visible focus indication.
 - Associate field errors with the corresponding input and announce action feedback with an appropriate live region.
 - Indicate busy actions with text such as “Paying…” and disable duplicate submissions.
-- When Start parking is disabled, show the reason beneath it (choose a vehicle/city/zone, vehicle already parked, no active zones).
+- When Start parking is disabled, show the reason beneath it (choose a vehicle/city/zone, vehicle already parked, vehicle has unpaid parking, no active zones).
 - Action messages close after 5 s (success) or 10 s (error/warning) and have a dismiss button. A message offering a refresh retry stays until dismissed or used.
 - Provide distinct empty messages for no vehicles, no zones, no active parking, no unpaid parking, and no history.
 - Make the page usable on a narrow viewport; permit horizontal scrolling for a wide history table or use a compact card presentation.

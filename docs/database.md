@@ -92,7 +92,7 @@ CREATE UNIQUE INDEX uq_parking_sessions_active_vehicle
     WHERE status = 'ACTIVE';
 ```
 
-Completed rows do not prevent another session for the vehicle. A completed unpaid session also does not block a new session.
+Completed rows do not prevent another session in the database. The service blocks a new start while the vehicle has a completed unpaid session; that cross-table rule is enforced under the user lock, not by a constraint.
 
 ### `payments`
 

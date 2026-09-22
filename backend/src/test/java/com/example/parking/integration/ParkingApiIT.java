@@ -119,12 +119,25 @@ class ParkingApiIT {
     }
 
     @Test
-    void sameVehicleCannotParkTwiceButCanAfterCompletion() throws Exception {
+    void sameVehicleCannotParkTwiceOrAgainUntilPaid() throws Exception {
         long id = startId(1, 1, 1);
         start(1, 1, 2).andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("VEHICLE_ALREADY_PARKED"));
 
         stop(id, 1).andExpect(status().isOk());
+        expectError(start(1, 1, 2), 409, "VEHICLE_HAS_UNPAID_PARKING");
+        assertThat(sql("SELECT count(*) FROM parking_sessions WHERE vehicle_id = 1")).isEqualTo("1");
+
+        mvc.perform(post("/api/parkings/" + id + "/payment").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"userId\":1}")).andExpect(status().isCreated());
         start(1, 1, 2).andExpect(status().isCreated());
+    }
+
+    @Test
+    void unpaidParkingBlocksOnlyThatVehicle() throws Exception {
+        long id = startId(1, 1, 1);
+        stop(id, 1).andExpect(status().isOk());
+
+        start(1, 2, 1).andExpect(status().isCreated());
     }
 
     @Test

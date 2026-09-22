@@ -23,6 +23,14 @@ public interface ParkingSessionRepository extends JpaRepository<ParkingSession, 
 
     boolean existsByVehicleIdAndStatus(Long vehicleId, SessionStatus status);
 
+    /** Whether the vehicle has a completed session without a payment. */
+    @Query("""
+            select count(s) > 0 from ParkingSession s
+            where s.vehicle.id = :vehicleId
+              and s.status = com.example.parking.entity.SessionStatus.COMPLETED
+              and not exists (select p.id from Payment p where p.session = s)""")
+    boolean existsUnpaidByVehicleId(Long vehicleId);
+
     /** Take only after the owning user's lock (user, then session). */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select s from ParkingSession s where s.id = :id")
