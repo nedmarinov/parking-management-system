@@ -16,6 +16,9 @@ import { formatMoney } from "@/lib/format";
 const loadUsers = (_key, signal) => listUsers(signal);
 const loadCities = (_key, signal) => listCities(signal);
 
+// Messages close themselves; one offering a refresh retry stays until dismissed or used.
+const DISMISS_AFTER_MS = { success: 5_000, error: 10_000, warning: 10_000 };
+
 export default function App() {
   const users = useResource(loadUsers, "all");
   const cities = useResource(loadCities, "all");
@@ -33,15 +36,30 @@ export default function App() {
   const [feedback, setFeedback] = useState({ userId: null, messages: {} });
   const messages = feedback.userId === selectedUserId ? feedback.messages : {};
   const userRef = useRef(selectedUserId);
+  const dismissTimers = useRef({});
   useEffect(() => {
     userRef.current = selectedUserId;
   }, [selectedUserId]);
+  useEffect(() => {
+    const timers = dismissTimers.current;
+    return () => Object.values(timers).forEach(clearTimeout);
+  }, []);
 
-  function setMessage(userId, name, message) {
+  function setMessage(userId, name, content) {
+    clearTimeout(dismissTimers.current[name]);
+    const message = content && { ...content, dismiss: () => setMessage(userId, name, null) };
     setFeedback((current) => ({
       userId,
       messages: { ...(current.userId === userId ? current.messages : {}), [name]: message },
     }));
+    if (message && !message.retry) {
+      // Clear only this exact message, so a timer never removes a newer one.
+      dismissTimers.current[name] = setTimeout(() => {
+        setFeedback((current) =>
+          current.messages[name] === message ? { ...current, messages: { ...current.messages, [name]: null } } : current,
+        );
+      }, DISMISS_AFTER_MS[message.tone]);
+    }
   }
 
   /**

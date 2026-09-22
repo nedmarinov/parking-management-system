@@ -5,6 +5,7 @@ import { fieldClass, labelClass } from "@/components/Panel";
 import { Button } from "@/components/ui/button";
 import { useResource } from "@/hooks/useResource";
 import { formatMoney } from "@/lib/format";
+import { startBlocker } from "./startBlocker";
 
 export function StartParkingForm({ userId, vehicles, active, cities, busy, onStart, feedback }) {
   // The vehicle choice belongs to one user; city and zone are shared catalog context and survive user changes.
@@ -17,12 +18,14 @@ export function StartParkingForm({ userId, vehicles, active, cities, busy, onSta
   const parkedIds = new Set((active.data ?? []).map((session) => session.vehicle.id));
   const selectedZone = zones.data?.find((zone) => String(zone.id) === zoneId) ?? null;
   const locked = busy !== null;
-  const canStart = !locked && vehicleId !== "" && !parkedIds.has(Number(vehicleId)) && selectedZone !== null;
+  const blocker = startBlocker({ vehicles: vehicles.data, parkedIds, vehicleId, cityId, zones: zones.data, zoneId });
+  const canStart = !locked && blocker === null;
 
+  // The selection is kept after a start: the button then shows the vehicle as parked, and becomes
+  // available again as soon as the active list no longer contains it.
   async function submit(event) {
     event.preventDefault();
-    if (!canStart) return;
-    if (await onStart(Number(vehicleId), selectedZone.id)) setVehicleChoice({ userId, vehicleId: "" });
+    if (canStart) await onStart(Number(vehicleId), selectedZone.id);
   }
 
   return (
@@ -106,9 +109,14 @@ export function StartParkingForm({ userId, vehicles, active, cities, busy, onSta
       </div>
 
       <div>
-        <Button type="submit" size="lg" disabled={!canStart}>
+        <Button type="submit" size="lg" disabled={!canStart} aria-describedby={blocker ? "start-blocker" : undefined}>
           {busy === "start" ? "Starting…" : "Start parking"}
         </Button>
+        {blocker && !locked && (
+          <p id="start-blocker" className="mt-1.5 text-sm text-[#183c35]/75">
+            {blocker}
+          </p>
+        )}
         <Feedback message={feedback} />
       </div>
     </form>

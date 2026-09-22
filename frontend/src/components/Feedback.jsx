@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const TONES = {
@@ -6,7 +7,7 @@ const TONES = {
   warning: "border-amber-700/25 bg-amber-50 text-amber-950",
 };
 
-/** Live-region message for a section's action result; `retry` offers a read-only retry. */
+/** Live-region message for a section's action result; `retry` offers a read-only retry, `dismiss` closes it. */
 export function Feedback({ message }) {
   return (
     <div role="status" aria-live="polite" className="empty:hidden">
@@ -17,6 +18,16 @@ export function Feedback({ message }) {
             <Button variant="outline" size="xs" onClick={message.retry}>
               Retry refresh
             </Button>
+          )}
+          {message.dismiss && (
+            <button
+              type="button"
+              aria-label="Dismiss message"
+              className="ml-auto rounded p-0.5 opacity-70 hover:opacity-100 focus-visible:ring-2 focus-visible:ring-current focus-visible:outline-none"
+              onClick={message.dismiss}
+            >
+              <X aria-hidden="true" className="size-4" />
+            </button>
           )}
         </div>
       )}
