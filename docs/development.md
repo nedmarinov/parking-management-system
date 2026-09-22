@@ -8,13 +8,11 @@ For the packaged application, install Docker with Docker Compose and start the D
 
 For local application development, use Java 21 and the included Maven wrapper, which selects Maven 3.9.16. The frontend `.nvmrc` selects Node 24.21.0; the project also supports Node 22.12+ and 24+. Use `npm ci` with the included `package-lock.json`.
 
-## Current bootstrap
+## Local development
 
-The backend currently runs without PostgreSQL. From `backend/`, run `./mvnw spring-boot:run`. From `frontend/`, run `npm ci` and `npm run dev` in another terminal. Open `http://127.0.0.1:5173` and confirm **Parking service connected**. `GET /api/health` returns `{"status":"UP"}` through the Vite proxy or directly on backend port 8080.
+Start only the database with `docker compose up -d postgres`. From `backend/`, run `./mvnw spring-boot:run`; Flyway migrates and seeds an empty database on first start. If you changed `POSTGRES_PORT`, also set `SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:<port>/parking`. From `frontend/`, run `npm ci` and `npm run dev` in another terminal, then open `http://127.0.0.1:5173`. Vite proxies `/api` to the backend on port 8080.
 
-The Dockerfiles, Nginx configuration, database container, and volume are present. The application does not yet read database settings or apply migrations. The database-backed behavior and integration-test commands below describe later phases.
-
-## Target Compose services
+## Compose services
 
 | Service | Responsibility | Host access |
 | --- | --- | --- |
@@ -22,11 +20,11 @@ The Dockerfiles, Nginx configuration, database container, and volume are present
 | `backend` | Spring Boot listening on container port 8080 | Reached through frontend in the full stack |
 | `postgres` | PostgreSQL with a named data volume | Publish `127.0.0.1:${POSTGRES_PORT:-5432}` for local development and integration tests |
 
-PostgreSQL has a `pg_isready` health check. Backend depends on a healthy database, and frontend depends on backend health. The current backend check uses `/api/health`; switch to database-backed `/api/cities` when that endpoint exists. Flyway startup migrations will be added in Phase 2. The backend runtime image installs curl for its health check.
+PostgreSQL has a `pg_isready` health check. Backend depends on a healthy database, and frontend depends on backend health. The backend check calls database-backed `/api/cities`, so it passes only after Flyway has migrated and the database is reachable; the runtime image installs curl for it. The frontend check requests the Nginx root page, so `docker compose up --wait` returns only when the application is serving.
 
 The frontend image builds with Node and serves only generated assets through Nginx at runtime. The backend image builds with Maven/Java 21 and runs the packaged application on Java 21. Configure Nginx so `/api/...` reaches `http://backend:8080/api/...` unchanged, while ordinary frontend paths serve the application.
 
-## Planned configuration contract
+## Configuration
 
 The root `.env.example` documents defaults, and local `.env` files are ignored by Git. Compose supplies these defaults without manual configuration:
 
@@ -59,13 +57,13 @@ From the repository root with a working Docker engine:
 docker compose up --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The bootstrap serves the coming-soon page. Check its API connection with:
+Open [http://localhost:3000](http://localhost:3000). First startup creates the schema and demo data. Check the API through Nginx with:
 
 ```bash
-curl -i http://localhost:3000/api/health
+curl http://localhost:3000/api/users
 ```
 
-Expected: `200` with `{"status":"UP"}`. After the persistence and catalog phases, first startup will also create the schema and demo fixtures, and `/api/users` will return Alex and Maria. Persistence of changed balances and records will be verified when those features exist.
+Expected: Alex Johnson (20.00) and Maria Smith (10.00) on a fresh database. Balances, sessions, and payments persist in the named volume across `docker compose down` and `up`.
 
 For background operation:
 
@@ -137,7 +135,7 @@ TEST_DATABASE_USERNAME=parking
 TEST_DATABASE_PASSWORD=parking
 ```
 
-From `backend/`, the planned full verification command is:
+From `backend/`, the full verification command is:
 
 ```bash
 TEST_DATABASE_URL=jdbc:postgresql://localhost:5432/parking_test \

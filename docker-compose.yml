@@ -28,7 +28,8 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/api/health"]
+      # /api/cities reads the database, so "healthy" also means migrated and connected.
+      test: ["CMD", "curl", "--fail", "--silent", "--output", "/dev/null", "http://localhost:8080/api/cities"]
       interval: 5s
       timeout: 5s
       retries: 10

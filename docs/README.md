@@ -1,6 +1,6 @@
 # Documentation
 
-These documents specify the first implementation of the Parking Management System. The [Phase 1 bootstrap](checkpoints/001-bootstrap.md) is complete; business features are not implemented yet. A specification marked **Ready** has enough detail to implement; it does not indicate delivered functionality.
+These documents specify the first implementation of the Parking Management System. All features are implemented; see the [plan](PLAN.md) for verification status. A specification marked **Ready** has enough detail to implement; it does not indicate delivered functionality.
 
 ## Reading order
 
@@ -33,7 +33,7 @@ These documents specify the first implementation of the Parking Management Syste
 | `database.md` | Tables, columns, constraints, indexes, migrations, seed data |
 | `architecture.md` | Shared design decisions, transaction boundaries, locking |
 | `frontend.md` | Page structure, state handling, request coordination, accessibility |
-| `development.md` | Planned setup and operational commands |
+| `development.md` | Setup and operational commands |
 | `testing.md` | Verification method and release smoke test |
 | `PLAN.md` | Scope, implementation order, delivery tracking |
 | `checkpoints/` | Completed implementation increments, observed verification, and review instructions |

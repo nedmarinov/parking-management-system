@@ -1,6 +1,6 @@
 # Testing and Acceptance
 
-Status: Bootstrap build and runtime checks are recorded in [checkpoint 001](checkpoints/001-bootstrap.md). No automated application test cases exist yet. The business test suites below remain planned.
+Status: Implemented. The backend has unit, web-slice, and PostgreSQL integration suites covering the required cases below; the frontend has Vitest unit tests. The Compose smoke test has passed via curl. Manual browser checks in the frontend section are pending.
 
 ## Approach
 

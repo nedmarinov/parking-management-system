@@ -8,7 +8,7 @@ This is a lightweight workflow for a working prototype. Its priorities are corre
 
 The original brief has been analyzed and expanded into an implementation plan, shared technical contracts, and six feature specifications. The documentation is stored in a local Git repository with an initial commit.
 
-The [Phase 1 bootstrap](checkpoints/001-bootstrap.md) is complete and committed. Business features remain specified but unimplemented. Checkpoint records distinguish observed build/runtime results from planned behavior. The workflow below defines how we move from specifications to verified software.
+All planned phases are implemented and committed; the [plan](PLAN.md) records the verification for each. The frontend still needs a manual browser review. Checkpoint records distinguish observed build/runtime results from planned behavior. The workflow below defines how we move from specifications to verified software.
 
 ## How work progresses
 

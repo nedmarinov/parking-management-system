@@ -2,9 +2,9 @@
 
 A full-stack prototype for managing paid parking across multiple cities. Demo users select a vehicle and parking zone, start and stop parking, and pay using a fictional account balance.
 
-**Project status:** Phase 1 bootstrap is complete. The backend, frontend shell, Maven wrapper, pinned dependencies, and Docker Compose files are present. Parking features, database integration, and migrations are still pending. See the [bootstrap checkpoint](docs/checkpoints/001-bootstrap.md) for verification and review instructions.
+**Project status:** Working prototype. All features are implemented and tested, and `docker compose up --build` starts the full stack. The frontend has not yet had a manual browser review. See the [implementation plan](docs/PLAN.md) for per-phase verification.
 
-## Intended user flow
+## User flow
 
 1. Select a predefined demo user and view their balance and vehicles.
 2. Add fictional funds to the account.
@@ -14,19 +14,19 @@ A full-stack prototype for managing paid parking across multiple cities. Demo us
 6. Explicitly pay from the account balance.
 7. Review completed parking and payment status in history.
 
-Each vehicle can have one active session. A user can park multiple vehicles at once. Every started hour is billed, with a one-hour minimum. Stopping parking does not charge the account.
+Each vehicle can have one active session. A user can park multiple vehicles at once. Every started hour is billed, with a one-hour minimum, at the rate captured when parking started. Stopping parking does not charge the account.
 
 ## Technology
 
-| Area | Planned technology |
+| Area | Technology |
 | --- | --- |
-| Backend | Java 21, Spring Boot 3.5.16, Spring Web, Jakarta Bean Validation, Maven 3.9.16; Spring Data JPA planned |
-| Database | PostgreSQL, Flyway |
-| Frontend | React 19.3.0, Vite 8.3.0, JavaScript/JSX, native `fetch`, shadcn/ui, Tailwind CSS |
-| Tests | JUnit 5, Mockito, targeted PostgreSQL integration tests |
-| Runtime | Docker Compose, Nginx |
+| Backend | Java 21, Spring Boot 3.5.16 (Web, Validation, Data JPA), Maven 3.9.16 via wrapper |
+| Database | PostgreSQL 17, Flyway migrations, Hibernate schema validation |
+| Frontend | React 19.3.0, Vite 8.3.0, JavaScript/JSX, native `fetch`, Tailwind CSS 4, shadcn/ui |
+| Tests | JUnit 5, Mockito, Spring MockMvc, PostgreSQL integration tests; Vitest 5.0.1 |
+| Runtime | Docker Compose, Nginx 1.30 |
 
-Direct frontend dependencies and container image versions are pinned. The Maven wrapper pins Maven; the Spring Boot parent manages backend dependency versions. The frontend's `.nvmrc` selects Node 24.21.0; Node 22.12+ and 24+ are supported by the project configuration.
+Direct frontend dependencies and container image versions are pinned. The Maven wrapper pins Maven; the Spring Boot parent manages backend dependency versions. The frontend's `.nvmrc` selects Node 24.21.0; Node 22.12+ and 24+ are supported.
 
 ## Repository layout
 
@@ -35,61 +35,45 @@ parking-management-system/
 ├── README.md
 ├── PLAN.MD                      # Navigation to the maintained plan
 ├── docs/                        # Specifications and development guidance
-│   ├── PLAN.md
-│   ├── methodology.md
-│   ├── architecture.md
-│   ├── api.md
-│   ├── database.md
-│   ├── frontend.md
-│   ├── development.md
-│   ├── testing.md
-│   ├── checkpoints/
-│   ├── specs/
-│   └── reference/original-plan.md
-├── backend/                     # Spring Boot application and Maven wrapper
-├── frontend/                    # React application and Nginx configuration
-└── docker-compose.yml           # Bootstrap application stack
+├── backend/                     # Spring Boot API, Flyway migrations, tests
+├── frontend/                    # React application, Vitest tests, Nginx configuration
+└── docker-compose.yml           # PostgreSQL, backend, and frontend
 ```
 
 ## Running the application
 
-The current checkpoint can run locally in two terminals. From `backend/`:
-
-```bash
-./mvnw spring-boot:run
-```
-
-From `frontend/`:
-
-```bash
-npm ci
-npm run dev
-```
-
-Open [http://127.0.0.1:5173](http://127.0.0.1:5173). The page should show **Parking service connected**. PostgreSQL is not needed by this bootstrap backend.
-
-The Compose files also provide the intended packaged startup:
+With Docker, from the repository root:
 
 ```bash
 docker compose up --build
 ```
 
-Once Docker starts the stack, open [http://localhost:3000](http://localhost:3000). Nginx serves React and forwards `/api` to the backend. Compose configuration validation passed; container builds and startup remain unverified because the local Docker engine returned an API error. PostgreSQL has a named volume but is not yet connected to the application. Flyway and demo data belong to Phase 2.
+Open [http://localhost:3000](http://localhost:3000). Nginx serves the React app and forwards `/api` to the backend. The first start creates the schema and demo data: Alex Johnson (20.00 EUR, two vehicles) and Maria Smith (10.00 EUR, one vehicle), with zones in Sofia and Plovdiv. Data persists in a named volume across `docker compose down` and `up`.
 
-Startup, local development, configuration, shutdown, and database reset instructions are defined in the [development guide](docs/development.md).
+If host port 5432 is already in use, set `POSTGRES_PORT` (for example `POSTGRES_PORT=5433 docker compose up --build`). For local development without the packaged images, see the [development guide](docs/development.md).
 
 ## Testing
 
-Backend commands, run from `backend/`:
+Backend, from `backend/`. Integration tests need a database whose name ends in `_test`; create it once with `docker compose exec postgres psql -U parking -d postgres -c 'CREATE DATABASE parking_test OWNER parking;'`.
 
 ```bash
-./mvnw test
-./mvnw verify
+./mvnw test      # unit and web-slice tests, no database needed
+TEST_DATABASE_URL=jdbc:postgresql://localhost:5432/parking_test \
+TEST_DATABASE_USERNAME=parking TEST_DATABASE_PASSWORD=parking \
+./mvnw verify    # adds the PostgreSQL integration tests
 ```
 
-The bootstrap has been packaged successfully with `verify`. No application test cases exist yet; this establishes a successful build, not verified parking behavior. The planned unit, validation, and PostgreSQL integration suites will be added with their features. See the [testing strategy](docs/testing.md) for required cases and the final smoke test.
+The integration tests cover the schema and constraints, every endpoint and error code, the pricing rules, and real concurrent requests: duplicate starts, stops, and payments, plus top-ups racing payments. They also force a failure mid-payment to prove it rolls back completely.
 
-From `frontend/`, `npm ci` installs locked dependencies and `npm run build` produces the application assets.
+Frontend, from `frontend/`:
+
+```bash
+npm ci
+npm test         # Vitest unit tests
+npm run build
+```
+
+See the [testing strategy](docs/testing.md) for the required cases and the Compose smoke test.
 
 ## Scope and assumptions
 
