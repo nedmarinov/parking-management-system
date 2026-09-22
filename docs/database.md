@@ -9,7 +9,8 @@ PostgreSQL is the sole persistent store. Flyway creates and evolves the schema t
 ```text
 backend/src/main/resources/db/migration/
 ├── V1__create_schema.sql
-└── V2__seed_demo_data.sql
+├── V2__seed_demo_data.sql
+└── V3__align_plovdiv_zone_prices.sql
 ```
 
 Set `spring.jpa.hibernate.ddl-auto=validate` and `spring.jpa.open-in-view=false`. Add new versioned migrations after a migration has been applied or shared. Startup must preserve user balances, sessions, and payments; it must not reseed or clear existing rows.
@@ -150,7 +151,7 @@ If a calculated parking charge exceeds the storage limit, reject stop with `AMOU
 | --- | --- | --- | --- | --- |
 | 1 | 1 | Blue Zone | 2.00 | true |
 | 2 | 1 | Green Zone | 1.00 | true |
-| 3 | 2 | Blue Zone | 1.50 | true |
+| 3 | 2 | Blue Zone | 1.50 (2.00 after `V3`) | true |
 | 4 | 2 | Green Zone | 1.00 | true |
 | 5 | 2 | Red Zone | 3.00 | false |
 

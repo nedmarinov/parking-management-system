@@ -74,7 +74,7 @@ class CatalogApiIT {
         mvc.perform(get("/api/cities/2/zones"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("""
-                        [{"id":3,"name":"Blue Zone","cityId":2,"pricePerHour":"1.50","active":true},
+                        [{"id":3,"name":"Blue Zone","cityId":2,"pricePerHour":"2.00","active":true},
                          {"id":4,"name":"Green Zone","cityId":2,"pricePerHour":"1.00","active":true}]""", JsonCompareMode.STRICT));
     }
 

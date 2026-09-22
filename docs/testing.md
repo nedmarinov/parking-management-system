@@ -109,8 +109,8 @@ Run against a disposable demo environment. If starting from an existing volume, 
 7. Stop the first vehicle promptly. Verify it leaves the active list, has a final `2.00` amount for a duration under one hour, and appears unpaid. Balance remains `30.00`.
 8. Pay that session. Verify balance becomes `28.00`, history says paid, and the unpaid item disappears. A second payment must conflict without further deduction.
 9. With a session belonging to Alex, attempt stop/pay as Maria through the API and verify ownership rejection.
-10. Exercise insufficient funds using a dedicated fixture. For a fresh disposable smoke database only, set Maria's balance to zero with the command below, then refresh her UI context. Start and promptly stop her vehicle in Plovdiv Blue Zone; payment of `1.50` must fail without creating a payment or changing the zero balance.
-11. Top up Maria by `5.00`, explicitly pay again, and verify a `3.50` balance and paid history.
+10. Exercise insufficient funds using a dedicated fixture. For a fresh disposable smoke database only, set Maria's balance to zero with the command below, then refresh her UI context. Start and promptly stop her vehicle in Plovdiv Blue Zone; payment of `2.00` must fail without creating a payment or changing the zero balance.
+11. Top up Maria by `5.00`, explicitly pay again, and verify a `3.00` balance and paid history.
 12. Confirm completed-only history, consistent dates, final amounts, and payment times. Confirm Alex's other active vehicle remains active when returning to his account.
 13. Record current balances, active sessions, and history. Run `docker compose down`, then `docker compose up --build` without deleting the volume. Confirm those values persist.
 14. Stop the remaining active session if desired. Record the exact test commands, outcomes, and any remaining limitation in the implementation handoff.

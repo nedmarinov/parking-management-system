@@ -30,7 +30,7 @@ class MigrationIT {
     @Test
     void migratesEmptyDatabaseAndSeedsDemoData() {
         assertThat(flyway.info().applied()).extracting(m -> m.getVersion().getVersion())
-                .containsExactly("1", "2");
+                .containsExactly("1", "2", "3");
 
         assertThat(jdbc.queryForList("SELECT name, balance FROM users ORDER BY id"))
                 .extracting(r -> r.get("name"), r -> r.get("balance"))

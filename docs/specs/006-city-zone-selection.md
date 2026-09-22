@@ -29,7 +29,7 @@ Load the city catalog at page startup. The person chooses a city; the UI clears 
 
 Use `GET /api/cities` and `GET /api/cities/{cityId}/zones`, defined in [the catalog API](../api.md#cities-and-zones). Store cities and zones according to [the database design](../database.md).
 
-Seed Sofia Blue/Green zones at `2.00`/`1.00` and Plovdiv Blue/Green zones at `1.50`/`1.00`, plus an inactive Plovdiv Red Zone at `3.00`. Exact identities live in [demo data](../database.md#demo-data).
+Seed Sofia Blue/Green zones at `2.00`/`1.00` and Plovdiv Blue/Green zones at `2.00`/`1.00` (the same rates as Sofia; `V3` aligns them), plus an inactive Plovdiv Red Zone at `3.00`. Exact identities live in [demo data](../database.md#demo-data).
 
 ## UI behavior
 
@@ -39,7 +39,7 @@ Use labeled City and Parking Zone selectors. Show city-specific prices with the 
 
 - [ ] Sofia and Plovdiv appear as separate city choices.
 - [ ] Sofia exposes two active zones with rates `2.00` and `1.00`.
-- [ ] Plovdiv exposes two active zones with rates `1.50` and `1.00`; its inactive Red Zone is absent.
+- [ ] Plovdiv exposes two active zones with rates `2.00` and `1.00`, matching Sofia; its inactive Red Zone is absent.
 - [ ] Starting directly with the inactive Red Zone ID returns `ZONE_INACTIVE`.
 - [ ] Changing city clears the selected zone before loading new choices.
 - [ ] A delayed zone response for the previous city cannot replace the current city's zones.

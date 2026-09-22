@@ -80,13 +80,13 @@ class PaymentApiIT {
 
     @Test
     void insufficientFundsChangeNothingAndRetryAfterTopUpSucceeds() throws Exception {
-        long id = completedSession(2, 3, 3, Duration.ofHours(7)); // 7 h at 1.50 = 10.50 > 10.00
+        long id = completedSession(2, 3, 3, Duration.ofHours(6)); // 6 h at 2.00 = 12.00 > 10.00
 
         expectError(act(id, "payment", 2), 409, "INSUFFICIENT_BALANCE");
         assertThat(sql("SELECT balance FROM users WHERE id = 2")).isEqualTo("10.00");
         assertThat(sql("SELECT count(*) FROM payments")).isEqualTo("0");
 
-        mvc.perform(post("/api/users/2/top-up").contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"0.50\"}"))
+        mvc.perform(post("/api/users/2/top-up").contentType(MediaType.APPLICATION_JSON).content("{\"amount\":\"2.00\"}"))
                 .andExpect(status().isOk());
         act(id, "payment", 2).andExpect(status().isCreated()).andExpect(jsonPath("$.remainingBalance").value("0.00"));
     }
