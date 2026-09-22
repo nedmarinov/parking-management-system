@@ -4,6 +4,8 @@ WORKDIR /app
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
 RUN chmod +x mvnw
+# Cache dependencies in their own layer so source changes do not re-download them.
+RUN ./mvnw --batch-mode --no-transfer-progress dependency:go-offline
 COPY src/ src/
 RUN ./mvnw --batch-mode --no-transfer-progress package
 

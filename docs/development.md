@@ -1,6 +1,6 @@
 # Development and Operations Guide
 
-Status: Bootstrap setup is present. Local backend/frontend builds and API connectivity have been verified. Compose configuration validates, but container builds/startup remain unverified because the Docker engine returned an API error. Business endpoints, migrations, and database integration remain pending. See [checkpoint 001](checkpoints/001-bootstrap.md) for the exact current scope.
+Status: Bootstrap setup is present. Local backend/frontend builds and API connectivity have been verified. A clean `docker compose up --build` has been verified, including data persistence across restarts. See [checkpoint 001](checkpoints/001-bootstrap.md) for the exact current scope.
 
 ## Prerequisites
 
